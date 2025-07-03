@@ -2,35 +2,88 @@
 const navbar = document.querySelector('.navbar');
 const navToggle = document.querySelector('.nav-toggle');
 const navMenu = document.querySelector('.nav-menu');
+const navLinks = document.querySelectorAll('.nav-link');
 const statNumbers = document.querySelectorAll('.stat-number');
-const fadeElements = document.querySelectorAll('.fade-in');
+const fadeElements = document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right, .scale-in');
+const sections = document.querySelectorAll('section');
 
-// Navbar scroll effect
+// Navbar scroll effect with smooth transition
 window.addEventListener('scroll', () => {
     if (window.scrollY > 100) {
         navbar.style.background = 'rgba(15, 23, 42, 0.95)';
         navbar.style.backdropFilter = 'blur(20px)';
+        navbar.style.boxShadow = '0 10px 30px -10px rgba(0, 0, 0, 0.3)';
     } else {
         navbar.style.background = 'rgba(15, 23, 42, 0.9)';
         navbar.style.backdropFilter = 'blur(20px)';
+        navbar.style.boxShadow = 'none';
     }
+    
+    // Update active nav link based on scroll position
+    updateActiveNavLink();
 });
 
-// Mobile navigation toggle
+// Function to update active nav link based on scroll position
+function updateActiveNavLink() {
+    const scrollPosition = window.scrollY + 100; // Offset for better UX
+    
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        const sectionId = section.getAttribute('id');
+        
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${sectionId}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+    });
+}
+
+// Mobile navigation toggle with improved UX
 navToggle?.addEventListener('click', () => {
     navMenu.classList.toggle('active');
     navToggle.classList.toggle('active');
+    
+    // Prevent body scroll when menu is open
+    if (navMenu.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
 });
 
-// Smooth scrolling for navigation links
+// Close mobile menu when clicking on a link
+navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        navMenu.classList.remove('active');
+        navToggle.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+});
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!navbar.contains(e.target) && navMenu.classList.contains('active')) {
+        navMenu.classList.remove('active');
+        navToggle.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+});
+
+// Enhanced smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
+            const offsetTop = target.offsetTop - 80; // Account for fixed navbar
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
             });
         }
     });
@@ -262,7 +315,7 @@ document.querySelectorAll('.patreon-btn, .service-btn').forEach(button => {
     });
 });
 
-// Initialize animations on page load
+// Enhanced page load animations and UX improvements
 document.addEventListener('DOMContentLoaded', () => {
     // Add fade-in class to elements that should animate
     const animatedElements = document.querySelectorAll('.service-card, .benefit-card, .section-header');
@@ -271,14 +324,83 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(element);
     });
     
-    // Initialize smooth animations
+    // Initialize smooth card animations
+    const cards = document.querySelectorAll('.floating-card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 2}s`;
+        card.style.animation = 'floatSmooth 8s ease-in-out infinite';
+        card.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+    });
+    
+    // Initialize page with loading animation
+    document.body.style.opacity = '0';
     setTimeout(() => {
-        document.querySelectorAll('.floating-card').forEach((card, index) => {
-            card.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-            card.style.animationDelay = `${index * 0.2}s`;
-        });
-    }, 500);
+        document.body.style.transition = 'opacity 0.5s ease';
+        document.body.style.opacity = '1';
+    }, 100);
+    
+    // Add keyboard navigation support
+    addKeyboardNavigation();
+    
+    // Initialize tooltips for better UX
+    initializeTooltips();
+    
+    // Add focus management for accessibility
+    addFocusManagement();
 });
+
+// Keyboard navigation support
+function addKeyboardNavigation() {
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+            navMenu.classList.remove('active');
+            navToggle.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+}
+
+// Initialize tooltips for interactive elements
+function initializeTooltips() {
+    const tooltipElements = document.querySelectorAll('[data-tooltip]');
+    tooltipElements.forEach(element => {
+        element.addEventListener('mouseenter', showTooltip);
+        element.addEventListener('mouseleave', hideTooltip);
+    });
+}
+
+// Focus management for better accessibility
+function addFocusManagement() {
+    // Add focus indicators for keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            document.body.classList.add('keyboard-navigation');
+        }
+    });
+    
+    document.addEventListener('mousedown', () => {
+        document.body.classList.remove('keyboard-navigation');
+    });
+}
+
+// Tooltip functions
+function showTooltip(e) {
+    const tooltip = document.createElement('div');
+    tooltip.className = 'tooltip';
+    tooltip.textContent = e.target.getAttribute('data-tooltip');
+    document.body.appendChild(tooltip);
+    
+    const rect = e.target.getBoundingClientRect();
+    tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
+    tooltip.style.top = rect.top - tooltip.offsetHeight - 10 + 'px';
+}
+
+function hideTooltip() {
+    const tooltip = document.querySelector('.tooltip');
+    if (tooltip) {
+        tooltip.remove();
+    }
+}
 
 // Keyboard navigation
 document.addEventListener('keydown', (e) => {
