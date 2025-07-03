@@ -853,24 +853,74 @@ body {
     transform: translateY(0);
 }
 
+/* Mobile Navigation Styles */
+.nav-menu.active {
+    display: flex;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 70px);
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(20px);
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: var(--spacing-3xl);
+    gap: var(--spacing-xl);
+    z-index: 999;
+    animation: slideInDown 0.3s ease;
+}
+
+.nav-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.nav-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .hero {
         flex-direction: column;
         text-align: center;
         gap: var(--spacing-2xl);
+        min-height: 90vh;
     }
     
     .hero-visual {
         padding-left: 0;
+        min-height: 300px;
     }
     
     .patreon-content {
         grid-template-columns: 1fr;
+        gap: var(--spacing-2xl);
     }
     
     .footer-content {
         grid-template-columns: 1fr;
+        gap: var(--spacing-2xl);
+    }
+    
+    .section-title {
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
     }
 }
 
@@ -883,16 +933,37 @@ body {
         display: flex;
     }
     
+    .nav-container {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
     .container {
         padding: 0 var(--spacing-md);
     }
     
     .hero {
-        padding: var(--spacing-2xl) var(--spacing-md);
+        padding: calc(var(--spacing-2xl) + 60px) var(--spacing-md) var(--spacing-2xl);
+        min-height: 85vh;
+    }
+    
+    .hero-title {
+        font-size: clamp(2rem, 6vw, 3rem);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+        margin-bottom: var(--spacing-lg);
     }
     
     .hero-stats {
         justify-content: center;
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-xl);
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
     }
     
     .services-grid {
@@ -902,15 +973,28 @@ body {
     
     .service-card {
         min-height: auto;
+        padding: var(--spacing-xl);
+    }
+    
+    .service-title {
+        font-size: 1.25rem;
     }
     
     .benefits-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .benefit-card {
+        padding: var(--spacing-lg);
     }
     
     .floating-card {
         position: relative;
         margin-bottom: var(--spacing-md);
+        min-width: auto;
+        max-width: 100%;
+        padding: var(--spacing-md);
     }
     
     .discord-preview,
@@ -921,26 +1005,156 @@ body {
         right: auto;
         bottom: auto;
     }
+    
+    .hero-visual {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: center;
+    }
+    
+    .section-header {
+        margin-bottom: var(--spacing-2xl);
+    }
+    
+    .section-title {
+        font-size: clamp(1.5rem, 5vw, 2.2rem);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .section-subtitle {
+        font-size: 1rem;
+    }
+    
+    .patreon-card {
+        padding: var(--spacing-xl);
+    }
+    
+    .footer-links {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+        text-align: center;
+    }
 }
 
 @media (max-width: 480px) {
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .nav-container {
+        padding: var(--spacing-sm);
+    }
+    
+    .hero {
+        padding: calc(var(--spacing-xl) + 60px) var(--spacing-sm) var(--spacing-xl);
+        min-height: 80vh;
+    }
+    
+    .hero-title {
+        font-size: clamp(1.8rem, 8vw, 2.5rem);
+        line-height: 1.2;
+    }
+    
+    .hero-description {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+    
     .hero-cta {
         flex-direction: column;
         align-items: stretch;
+        gap: var(--spacing-sm);
     }
     
     .btn-primary,
     .btn-secondary {
         justify-content: center;
+        padding: var(--spacing-sm) var(--spacing-lg);
+        font-size: 0.95rem;
     }
     
     .hero-stats {
-        flex-direction: column;
+        flex-direction: row;
         gap: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .stat {
+        flex: 1;
+    }
+    
+    .stat-number {
+        font-size: 1.3rem;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+    }
+    
+    .service-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .service-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+    
+    .service-title {
+        font-size: 1.1rem;
+    }
+    
+    .service-description {
+        font-size: 0.9rem;
+    }
+    
+    .price {
+        font-size: 2rem;
+    }
+    
+    .benefit-card {
+        padding: var(--spacing-md);
+    }
+    
+    .benefit-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
     }
     
     .patreon-content {
         grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .patreon-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .patreon-header i {
+        font-size: 2.5rem;
+    }
+    
+    .amount {
+        font-size: 2.5rem;
+    }
+    
+    .section-title {
+        font-size: clamp(1.4rem, 6vw, 2rem);
+    }
+    
+    .floating-card {
+        padding: var(--spacing-sm);
+        min-width: auto;
+    }
+    
+    .footer-brand {
+        text-align: center;
+    }
+    
+    .footer-content {
         gap: var(--spacing-xl);
     }
 }
