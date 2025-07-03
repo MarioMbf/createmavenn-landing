@@ -991,10 +991,12 @@ body {
     
     .floating-card {
         position: relative;
-        margin-bottom: var(--spacing-md);
+        margin-bottom: var(--spacing-sm);
         min-width: auto;
-        max-width: 100%;
-        padding: var(--spacing-md);
+        max-width: 280px;
+        padding: var(--spacing-sm);
+        transform: scale(0.9);
+        animation: none;
     }
     
     .discord-preview,
@@ -1004,13 +1006,18 @@ body {
         left: auto;
         right: auto;
         bottom: auto;
+        margin: 0 auto;
     }
     
     .hero-visual {
         display: flex;
-        flex-direction: column;
-        gap: var(--spacing-md);
+        flex-direction: row;
+        gap: var(--spacing-sm);
         align-items: center;
+        justify-content: center;
+        margin-top: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+        flex-wrap: wrap;
     }
     
     .section-header {
@@ -1146,8 +1153,40 @@ body {
     }
     
     .floating-card {
-        padding: var(--spacing-sm);
+        padding: var(--spacing-xs);
         min-width: auto;
+        max-width: 240px;
+        transform: scale(0.85);
+        margin-bottom: 0;
+    }
+    
+    .hero-visual {
+        margin-top: var(--spacing-sm);
+        margin-bottom: var(--spacing-md);
+        gap: var(--spacing-xs);
+    }
+    
+    .card-header {
+        font-size: 0.875rem;
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .server-channels {
+        gap: 2px;
+    }
+    
+    .channel {
+        padding: 2px var(--spacing-xs);
+        font-size: 0.75rem;
+    }
+    
+    .mockup-header {
+        height: 6px;
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .mockup-line {
+        height: 3px;
     }
     
     .footer-brand {
