@@ -137,16 +137,17 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Parallax effect for hero section
-window.addEventListener('scroll', () => {
+// Smooth parallax effect for hero section
+function updateParallax() {
     const scrolled = window.pageYOffset;
     const parallaxElements = document.querySelectorAll('.floating-card');
     
     parallaxElements.forEach((element, index) => {
-        const speed = 0.5 + (index * 0.1);
-        element.style.transform = `translateY(${scrolled * speed}px)`;
+        const speed = 0.2 + (index * 0.05);
+        const yPos = scrolled * speed;
+        element.style.transform = `translateY(${yPos}px) scale(${1 - scrolled * 0.0001})`;
     });
-});
+}
 
 // Notification system
 function showNotification(message, type = 'success') {
@@ -270,10 +271,13 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(element);
     });
     
-    // Show welcome notification
+    // Initialize smooth animations
     setTimeout(() => {
-        showNotification('¡Bienvenido a CreateMavenn! Explora nuestros servicios profesionales.', 'success');
-    }, 1000);
+        document.querySelectorAll('.floating-card').forEach((card, index) => {
+            card.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            card.style.animationDelay = `${index * 0.2}s`;
+        });
+    }, 500);
 });
 
 // Keyboard navigation
@@ -301,14 +305,8 @@ function updateOnScroll() {
         navbar.style.background = 'rgba(15, 23, 42, 0.9)';
     }
     
-    // Parallax effect
-    const scrolled = window.pageYOffset;
-    const parallaxElements = document.querySelectorAll('.floating-card');
-    
-    parallaxElements.forEach((element, index) => {
-        const speed = 0.3 + (index * 0.1);
-        element.style.transform = `translateY(${scrolled * speed}px)`;
-    });
+    // Smooth parallax effect
+    updateParallax();
     
     ticking = false;
 }
