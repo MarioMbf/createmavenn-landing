@@ -25,20 +25,21 @@ window.addEventListener('scroll', () => {
 
 // Function to update active nav link based on scroll position
 function updateActiveNavLink() {
-    const scrollPosition = window.scrollY + 100; // Offset for better UX
+    const sections = ['home', 'services', 'reviews', 'about'];
+    const scrollPosition = window.scrollY + 100;
     
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.offsetHeight;
-        const sectionId = section.getAttribute('id');
+    sections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        const navLink = document.querySelector(`a[href="#${sectionId}"]`);
         
-        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${sectionId}`) {
-                    link.classList.add('active');
-                }
-            });
+        if (section && navLink) {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.offsetHeight;
+            
+            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+                navLink.classList.add('active');
+            }
         }
     });
 }
@@ -104,11 +105,46 @@ function animateCounter(element, target, duration = 2000) {
     }, 16);
 }
 
-// Intersection Observer for animations
+// Intersection Observer para animaciones mejoradas
 const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -50px 0px'
 };
+
+const animationObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const element = entry.target;
+            
+            // Añadir clases de animación basadas en el tipo de elemento
+            if (element.classList.contains('fade-in-up')) {
+                element.style.animationPlayState = 'running';
+            }
+            
+            if (element.classList.contains('fade-in-scale')) {
+                element.style.animationPlayState = 'running';
+            }
+            
+            if (element.classList.contains('animated-text')) {
+                element.classList.add('typewriter');
+            }
+            
+            if (element.classList.contains('animated-text-hero')) {
+                element.style.animationPlayState = 'running';
+            }
+            
+            // Animaciones escalonadas para elementos hijos
+            const delayedElements = element.querySelectorAll('[class*="delay-"]');
+            delayedElements.forEach((delayedEl, index) => {
+                setTimeout(() => {
+                    delayedEl.style.animationPlayState = 'running';
+                }, index * 100);
+            });
+            
+            animationObserver.unobserve(element);
+        }
+    });
+}, observerOptions);
 
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -127,6 +163,91 @@ const observer = new IntersectionObserver((entries) => {
         }
     });
 }, observerOptions);
+
+// Observar elementos con animaciones
+function initAnimations() {
+    const animatedElements = document.querySelectorAll('.fade-in-up, .fade-in-scale, .animated-text, .animated-text-hero');
+    
+    animatedElements.forEach(element => {
+        // Pausar animaciones inicialmente
+        element.style.animationPlayState = 'paused';
+        animationObserver.observe(element);
+    });
+}
+
+// Función para inicializar animaciones de texto typewriter
+function initTypewriterAnimations() {
+    const typewriterElements = document.querySelectorAll('.typewriter');
+    
+    typewriterElements.forEach(element => {
+        const text = element.textContent;
+        element.textContent = '';
+        element.style.width = '0';
+        
+        let i = 0;
+        const typeInterval = setInterval(() => {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                i++;
+            } else {
+                clearInterval(typeInterval);
+                // Remover el cursor parpadeante después de completar
+                setTimeout(() => {
+                    element.style.borderRight = 'none';
+                }, 1000);
+            }
+        }, 50);
+    });
+}
+
+// Función para manejar efectos de hover en las tarjetas de plantillas
+function initTemplateCardEffects() {
+    const templateCards = document.querySelectorAll('.template-card');
+    
+    templateCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(5px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0) scale(1)';
+        });
+    });
+}
+
+// Función para manejar los botones de plantillas
+function initTemplateButtons() {
+    const templateButtons = document.querySelectorAll('.template-btn');
+    
+    templateButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Efecto de ripple
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.classList.add('ripple');
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+            
+            // Redirigir a Patreon después del efecto
+            setTimeout(() => {
+                window.open('https://www.patreon.com/CreateMavenn', '_blank');
+            }, 300);
+        });
+    });
+}
 
 // Observe elements for fade-in animation
 fadeElements.forEach(element => {
@@ -315,6 +436,65 @@ document.querySelectorAll('.patreon-btn, .service-btn').forEach(button => {
     });
 });
 
+// Templates functionality
+function initTemplates() {
+    // Add ripple effect to template buttons
+    const templateBtns = document.querySelectorAll('.template-btn');
+    templateBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            // Create ripple effect
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.classList.add('ripple');
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+
+    // Add hover effects to template cards
+    const templateCards = document.querySelectorAll('.template-card');
+    templateCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(10px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0) scale(1)';
+        });
+    });
+
+    // Add hover effects to template categories
+    const templateCategories = document.querySelectorAll('.template-category');
+    templateCategories.forEach(category => {
+        category.addEventListener('mouseenter', function() {
+            const icon = this.querySelector('.category-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1.1) rotate(5deg)';
+                icon.style.color = '#ff6b6b';
+            }
+        });
+        
+        category.addEventListener('mouseleave', function() {
+            const icon = this.querySelector('.category-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1) rotate(0deg)';
+                icon.style.color = '#00d4ff';
+            }
+        });
+    });
+}
+
 // Enhanced page load animations and UX improvements
 document.addEventListener('DOMContentLoaded', () => {
     // Add fade-in class to elements that should animate
@@ -339,6 +519,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.opacity = '1';
     }, 100);
     
+    // Initialize new animations and effects
+    initAnimations();
+    initTemplateCardEffects();
+    initTemplateButtons();
+    initTemplates();
+    
     // Add keyboard navigation support
     addKeyboardNavigation();
     
@@ -347,6 +533,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Add focus management for accessibility
     addFocusManagement();
+    
+    // Inicializar animaciones de typewriter después de un pequeño delay
+    setTimeout(initTypewriterAnimations, 500);
 });
 
 // Keyboard navigation support
